@@ -341,15 +341,19 @@ cgroup_limit() {
 
 update_dashboard() {
   network_check
-  file_dasboard="${data_dir}/dashboard.zip"
-  rm -rf ${data_dir}/dashboard/dist
-  #url="https://github.com/haishanh/yacd/archive/refs/heads/gh-pages.zip"
-  url="https://github.com/MetaCubeX/Yacd-meta/archive/refs/heads/gh-pages.zip"
-  dir_name="Yacd-meta-gh-pages"
-  wget --no-check-certificate "${url}" -O ${file_dasboard} 2>&1
-  unzip -o  "${file_dasboard}" "${dir_name}/*" -d "${data_dir}/dashboard" >&2
-  mv -f ${data_dir}/dashboard/"${dir_name}" "${data_dir}/dashboard/dist"
-  rm -rf ${file_dasboard}
+  if [ "${bin_name}" = "sing-box" ] || [ "${bin_name}" = "clash" ] ; then
+    file_dasboard="${data_dir}/${bin_name}/dashboard.zip"
+    rm -rf ${data_dir}/${bin_name}/dashboard/dist
+    #url="https://github.com/haishanh/yacd/archive/refs/heads/gh-pages.zip"
+    url="https://github.com/MetaCubeX/Yacd-meta/archive/refs/heads/gh-pages.zip"
+    dir_name="Yacd-meta-gh-pages"
+    wget --no-check-certificate "${url}" -O ${file_dasboard} 2>&1
+    unzip -o  "${file_dasboard}" "${dir_name}/*" -d "${data_dir}/${bin_name}/dashboard" >&2
+    mv -f ${data_dir}/${bin_name}/dashboard/"${dir_name}" "${data_dir}/${bin_name}/dashboard/dist"
+    rm -rf ${file_dasboard}
+  else
+    log debug "${bin_name} does not support dashboards"
+  fi
 }
 
 run_base64() {

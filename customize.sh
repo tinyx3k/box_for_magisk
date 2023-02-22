@@ -62,13 +62,14 @@ mkdir -p ${MODPATH}/system/bin
 mkdir -p ${MODPATH}/system/etc/security/cacerts
 mkdir -p /data/adb/box
 mkdir -p /data/adb/box/bin
-mkdir -p /data/adb/box/dashboard
 mkdir -p /data/adb/box/run
 mkdir -p /data/adb/box/scripts
 mkdir -p /data/adb/box/xray
 mkdir -p /data/adb/box/v2fly
 mkdir -p /data/adb/box/sing-box
 mkdir -p /data/adb/box/clash
+mkdir -p /data/adb/box/clash/dashboard
+mkdir -p /data/adb/box/sing-box/dashboard
 
 ui_print "- Extracting BFM files"
 unzip -o "${ZIPFILE}" -x 'META-INF/*' -d ${MODPATH} >&2
@@ -105,7 +106,7 @@ ui_print "- Setting permissions"
 set_perm_recursive ${MODPATH} 0 0 0755 0644
 set_perm_recursive /data/adb/box/ 0 3005 0755 0644
 set_perm_recursive /data/adb/box/scripts/ 0 3005 0755 0700
-set_perm_recursive /data/adb/box/dashboard/ 0 3005 0755 0700
+# set_perm_recursive /data/adb/box/dashboard/ 0 3005 0755 0700
 set_perm  /data/adb/service.d/box_service.sh  0  0  0755
 set_perm  ${MODPATH}/service.sh  0  0  0755
 set_perm  ${MODPATH}/uninstall.sh  0  0  0755

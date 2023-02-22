@@ -15,7 +15,7 @@ geodata-loader: memconservative
 external-controller: 0.0.0.0:9090 
 # external-controller-tls: 0.0.0.0:9091 # RESTful API HTTPS device
 # secret: "123456"
-external-ui: ../dashboard/dist
+external-ui: ./dashboard/dist
 # tcp-concurrent: false
 # inbound-tfo: true
 # global-client-fingerprint: chrome
