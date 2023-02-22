@@ -464,7 +464,7 @@ if [ "${proxy_mode}" != "core" ] ; then
           fi
         ;;
         mixed)
-          log info "use mixed: tcp + tun, stack: ${clash_stack}."
+          log info "use mixed: tcp + tun"
           log info "creating iptables transparent proxy rules."
           iptables="iptables -w 100"
           forward -I || forward -D >> /dev/null 2>&1
@@ -539,7 +539,7 @@ if [ "${proxy_mode}" != "core" ] ; then
           fi
         ;;
         mixed)
-          log info "use mixed: tcp + tun, stack: ${clash_stack}."
+          log info "use mixed: tcp + tun"
           log info "creating iptables transparent proxy rules."
           iptables="iptables -w 100"
           forward -I || forward -D >> /dev/null 2>&1
@@ -596,12 +596,12 @@ else
       iptables="ip6tables -w 100" && stop_redirect >> /dev/null 2>&1
       iptables="ip6tables -w 100" && forward -D >> /dev/null 2>&1
       iptables="iptables -w 100"
-      forward -I && log info "use tun: tcp + udp, stack: ${clash_stack}" || (log info "use tun: tcp + udp failed." && forward -D >> /dev/null 2>&1)
+      forward -I && log info "use tun: tcp + udp" || (log info "use tun: tcp + udp failed." && forward -D >> /dev/null 2>&1)
       if [ "${ipv6}" = "true" ] ; then
         log debug "use IPv6."
         ipv6_enable
         iptables="ip6tables -w 100"
-        forward -I && log info "use tun ipv6: tcp + udp, stack: ${clash_stack}" || (log info "use tun ipv6: tcp + udp failed." && forward -D >> /dev/null 2>&1)
+        forward -I && log info "use tun ipv6: tcp + udp" || (log info "use tun ipv6: tcp + udp failed." && forward -D >> /dev/null 2>&1)
       else
         disable_ipv6
         log warn "disable IPv6."
@@ -623,12 +623,12 @@ else
       iptables="ip6tables -w 100" && forward -D >> /dev/null 2>&1
       log warn "clean up tun rules done."
       iptables="iptables -w 100"
-      forward -I && log info "use tun: tcp + udp, stack: ${clash_stack}" || log info "use tun: tcp + udp failed."
+      forward -I && log info "use tun: tcp + udp" || log info "use tun: tcp + udp failed."
       if [ "${ipv6}" = "true" ] ; then
         log debug "use IPv6."
         ipv6_enable
         iptables="ip6tables -w 100"
-        forward -I && log info "use tun ipv6: tcp + udp, stack: ${clash_stack}" || (log info "use tun ipv6: tcp + udp failed." && forward -D >> /dev/null 2>&1)
+        forward -I && log info "use tun ipv6: tcp + udp" || (log info "use tun ipv6: tcp + udp failed." && forward -D >> /dev/null 2>&1)
       else
         disable_ipv6
         log warn "disable IPv6."

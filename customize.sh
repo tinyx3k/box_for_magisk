@@ -80,9 +80,9 @@ ui_print "- Create resolv.conf"
 if [ ! -f "/system/etc/resolv.conf" ] ; then
   touch ${MODPATH}/system/etc/resolv.conf
   echo nameserver 8.8.8.8 > ${MODPATH}/system/etc/resolv.conf
-  echo nameserver 9.9.9.9 >> ${MODPATH}/system/etc/resolv.conf
+  echo nameserver 8.8.4.4 >> ${MODPATH}/system/etc/resolv.conf
   echo nameserver 1.1.1.1 >> ${MODPATH}/system/etc/resolv.conf
-  echo nameserver 149.112.112.112 >> ${MODPATH}/system/etc/resolv.conf
+  echo nameserver 1.0.0.1 >> ${MODPATH}/system/etc/resolv.conf
 fi
 
 ui_print "- Move BFM files"
@@ -91,7 +91,7 @@ mv ${MODPATH}/scripts/bin/mlbox /data/adb/box/bin/
 mv ${MODPATH}/scripts/src/* /data/adb/box/scripts/
 mv ${MODPATH}/scripts/clash/* /data/adb/box/clash/
 mv ${MODPATH}/scripts/settings.ini /data/adb/box/
-mv ${MODPATH}/scripts/template.yml /data/adb/box/
+# mv ${MODPATH}/scripts/template.yml /data/adb/box/
 mv ${MODPATH}/scripts/xray /data/adb/box/
 mv ${MODPATH}/scripts/v2fly /data/adb/box/
 mv ${MODPATH}/scripts/sing-box /data/adb/box/

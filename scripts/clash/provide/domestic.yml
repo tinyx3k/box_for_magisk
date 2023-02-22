@@ -1,0 +1,2 @@
+proxies:
+  - {name: "contabo asia ntls", server: 104.21.235.171, port: 80, type: vmess, uuid: aaa-aaa-aaa, alterId: 0, cipher: auto, tls: false, skip-cert-verify: true, servername: sg-contabo2.1server.co, network: ws, ws-opts: {path: /fastssh/, headers: {Host: sg-contabo2.1server.co}}, udp: true, xudp: true}

@@ -24,7 +24,7 @@ logs() {
 testing () {
   logs info "dns="
   for network in $(${data_dir}/bin/mlbox -timeout=5 -dns="-qtype=A -domain=asia.pool.ntp.org" | grep -v 'timeout' | grep -E '[1-9][0-9]{0,2}(\.[0-9]{1,3}){3}') ; do
-	  local ntpip=${network}
+	  ntpip=${network}
 	  break
   done
 
@@ -205,11 +205,11 @@ update_kernel() {
     arch="armv7"
     platform="linux"
   fi
-  local file_kernel="${bin_name}-${arch}"
+  file_kernel="${bin_name}-${arch}"
   case "${bin_name}" in
     sing-box)
-      local sing_box_version_temp=$(wget --no-check-certificate -qO- "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-      local sing_box_version=${sing_box_version_temp:1}
+      sing_box_version_temp=$(wget --no-check-certificate -qO- "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+      sing_box_version=${sing_box_version_temp:1}
       download_link="https://github.com/SagerNet/sing-box/releases/download/${sing_box_version_temp}/sing-box-${sing_box_version}-${platform}-${arch}.tar.gz"
       log debug "download ${download_link}"
       update_file "${data_dir}/${file_kernel}.tar.gz" "${download_link}"
@@ -220,11 +220,11 @@ update_kernel() {
         tag="Prerelease-Alpha"
         tag_name="alpha-[0-9,a-z]+"
         download_link="https://github.com/taamarin/Clash.Meta/releases"
-        local latest_version=$(wget --no-check-certificate -qO- "${download_link}/expanded_assets/${tag}" | grep -oE "${tag_name}" | head -1)
+        latest_version=$(wget --no-check-certificate -qO- "${download_link}/expanded_assets/${tag}" | grep -oE "${tag_name}" | head -1)
         filename="clash.meta"
         filename+="-${platform}"
         filename+="-${arch}"
-        filename+="-cgo"
+        # filename+="-cgo"
         filename+="-${latest_version}"
         log debug "download ${download_link}/download/${tag}/${filename}.gz"
         update_file "${data_dir}/${file_kernel}.gz" "${download_link}/download/${tag}/${filename}.gz"
@@ -245,7 +245,7 @@ update_kernel() {
     xray)
       download_link="https://github.com/XTLS/Xray-core/releases"
       github_api="https://api.github.com/repos/XTLS/Xray-core/releases"
-      local latest_version=$(wget --no-check-certificate -qO- ${github_api} | grep "tag_name" | grep -o "v[0-9.]*" | head -1)
+      latest_version=$(wget --no-check-certificate -qO- ${github_api} | grep "tag_name" | grep -o "v[0-9.]*" | head -1)
 
       [ $(uname -m) != "aarch64" ] \
       && download_file="Xray-linux-arm32-v7a.zip" || download_file="Xray-android-arm64-v8a.zip"
@@ -257,7 +257,7 @@ update_kernel() {
     v2fly)
       download_link="https://github.com/v2fly/v2ray-core/releases"
       github_api="https://api.github.com/repos/v2fly/v2ray-core/releases"
-      local latest_version=$(wget --no-check-certificate -qO- ${github_api} | grep "tag_name" | grep -o "v[0-9.]*" | head -1)
+      latest_version=$(wget --no-check-certificate -qO- ${github_api} | grep "tag_name" | grep -o "v[0-9.]*" | head -1)
 
       [ $(uname -m) != "aarch64" ] \
       && download_file="v2ray-linux-arm32-v7a.zip" || download_file="v2ray-android-arm64-v8a.zip"
@@ -274,7 +274,7 @@ update_kernel() {
   case "${bin_name}" in
     clash)
       [ -f /system/bin/gunzip ] \
-      && local extra="/system/bin/gunzip" || local extra="${busybox_path} gunzip"
+      && extra="/system/bin/gunzip" || extra="${busybox_path} gunzip"
       if (${extra} "${data_dir}/${file_kernel}.gz" >&2) ; then
         mv -f "${data_dir}/${file_kernel}" "${bin_kernel}/${bin_name}" \
         && flag="true" || log error "failed to move the kernel"
@@ -286,7 +286,7 @@ update_kernel() {
     ;;
     sing-box)
       [ -f /system/bin/tar ] \
-      && local extra="/system/bin/tar" || local extra="${busybox_path} tar"
+      && extra="/system/bin/tar" || extra="${busybox_path} tar"
       if (${extra} -xf "${data_dir}/${file_kernel}.tar.gz" -C ${data_dir}/bin >&2) ; then
         mv "${data_dir}/bin/sing-box-${sing_box_version}-${platform}-${arch}/sing-box" "${bin_kernel}/${bin_name}"
         rm -r "${data_dir}/bin/sing-box-${sing_box_version}-${platform}-${arch}" \
@@ -299,7 +299,7 @@ update_kernel() {
     ;;
     v2fly)
       [ -f /system/bin/unzip ] \
-      && local extra="/system/bin/unzip" || local extra="${busybox_path} unzip"
+      && extra="/system/bin/unzip" || extra="${busybox_path} unzip"
       if (${extra} -o "${data_dir}/${file_kernel}.zip" "v2ray" -d ${bin_kernel} >&2) ; then
         mv "${bin_kernel}/v2ray" "${bin_kernel}/v2fly" \
         && flag="true" || log error "failed to move the kernel"
@@ -311,7 +311,7 @@ update_kernel() {
     ;;
       xray)
       [ -f /system/bin/unzip ] \
-      && local extra="/system/bin/unzip" || local extra="${busybox_path} unzip"
+      && extra="/system/bin/unzip" || extra="${busybox_path} unzip"
       if (${extra} -o "${data_dir}/${file_kernel}.zip" "xray" -d ${bin_kernel} >&2) ; then
         mv "${bin_kernel}/xray" "${bin_kernel}/xray" \
         && flag="true" || log error "failed to move the kernel"

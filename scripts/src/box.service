@@ -29,31 +29,11 @@ crontab_geo() {
 }
 
 detected_port() {
-  sleep 1
-  [ "${port_detect}" = "true" ] && (${scripts_dir}/box.tool port) || (log warn "${bin_name} skip port detected." && return 1)
-}
-
-temporary_config_file() {
-  if [ -f "${data_dir}/template.yml" ] ; then
-    if [ -f "${clash_config}" ] ; then
-      cp -f ${data_dir}/template.yml ${data_dir}/run/config.yaml.temp \
-        && echo "\n" >> ${data_dir}/run/config.yaml.temp
-      # sed -n -E '/^proxies:$/,$p' ${clash_config} >> ${data_dir}/run/config.yaml.temp
-      awk '/proxies:/,EOF { print $0 }' ${clash_config} >> ${data_dir}/run/config.yaml.temp
-      sleep .3
-      sed -i '/^[  ]*$/d' ${data_dir}/run/config.yaml.temp
-    else
-      log error "${clash_config} file is missing."
-      exit 1
-    fi
+  if [ "${port_detect}" = "true" ] ; then
+    ${scripts_dir}/box.tool port
   else
-    log error "${data_dir}/template.yml file is missing."
-    exit 1
-  fi
-
-  if ! (mv ${data_dir}/run/config.yaml.temp ${data_dir}/run/config.yaml) ; then
-    log error "merge config failed!!!."
-    exit 1
+    log warn "${bin_name} skip port detected."
+    return 1
   fi
 }
 
@@ -64,19 +44,6 @@ still_alive() {
     kill -9 $(pidof ${bin_name}) || killall -9 ${bin_name}
     rm -rf ${pid_file}
     exit 1
-  fi
-}
-
-sinkron_port() {
-  if [ "${bin_name}" = "clash" ] ; then
-    if [ "${ceks_dns_port}" != "${clash_dns_port}" ] ; then
-      log info "sinkron dns listen"
-      sed -i "s/clash_dns_port=.*/clash_dns_port=\""${ceks_dns_port}"\"/" ${settings}
-    fi
-    if [ "${ceks_fake_ip_range}" != "${clash_fake_ip_range}" ] ; then
-      log error "fake-ip-range is out of sync, fix: open template.yml, match IP fake-ip-range: ${ceks_fake_ip_range} with clash_fake_ip_range: in settings.ini"
-      exit 1
-    fi
   fi
 }
 
@@ -151,13 +118,11 @@ run_box() {
   log info "client list: ${bin_list[*]}"
   log info "select: ${bin_name}"
   log info "starting ${bin_name} service."
-  sinkron_port
   ulimit -SHn 1000000
   case "${bin_name}" in
     sing-box)
       [ "${proxy_mode}" = "core" ] && \
-        log info "don't forget to set 'auto detect interface': true"
-      # && (sed -i 's/"auto_detect_interface":.*/"auto_detect_interface": true/' ${data_dir}/sing-box/config.json) || (sed -i 's/"auto_detect_interface":.*/"auto_detect_interface": false/' ${data_dir}/sing-box/config.json)
+        log info "don't forget to set 'route.auto_detect_interface': true"
       sed -i 's/network_mode=.*/network_mode="tproxy"/' ${settings}
       if (${bin_path} check -D ${data_dir}/${bin_name} > "${run_path}/${bin_name}-report.log" 2>&1) ; then
         nohup setuidgid 0:3005 ${bin_path} run -D ${data_dir}/${bin_name} > "${run_path}/${bin_name}.log" 2>&1 &
@@ -169,24 +134,19 @@ run_box() {
       ;;
     clash)
       if [ "${clash_tun_status}" = "true" ] ; then
-        sed -i 's/tproxy-port:.*/tproxy-port: 0/' ${data_dir}/template.yml
         sed -i 's/network_mode=.*/network_mode="mixed"/' ${settings}
-        sed -i 's/auto-route:.*/auto-route: true/' ${data_dir}/template.yml
-        sed -i 's/auto-detect-interface:.*/auto-detect-interface: true/' ${data_dir}/template.yml
+        sed -i 's/auto-route:.*/auto-route: true/' ${clash_config}
+        sed -i 's/auto-detect-interface:.*/auto-detect-interface: true/' ${clash_config}
       else
-        sed -i "s/tproxy-port:.*/tproxy-port: ${tproxy_port}/" ${data_dir}/template.yml
-        # jika ingin mengunakan redirect, hapus line di bawah
+        sed -i "s/tproxy-port:.*/tproxy-port: ${tproxy_port}/" ${clash_config}
         sed -i 's/network_mode=.*/network_mode="tproxy"/' ${settings}
-        # end
-        sed -i 's/auto-route:.*/auto-route: false/' ${data_dir}/template.yml
-        sed -i 's/auto-detect-interface:.*/auto-detect-interface: false/' ${data_dir}/template.yml
+        sed -i 's/auto-route:.*/auto-route: false/' ${clash_config}
+        sed -i 's/auto-detect-interface:.*/auto-detect-interface: false/' ${clash_config}
       fi
-      temporary_config_file
-      if (${bin_path} -t -d ${data_dir}/${bin_name} -f ${data_dir}/run/config.yaml > "${run_path}/${bin_name}-report.log") ; then
-        nohup setuidgid 0:3005 ${bin_path} -d ${data_dir}/${bin_name} -f ${data_dir}/run/config.yaml > "${run_path}/${bin_name}.log" 2>&1 &
+      if (${bin_path} -t -d ${data_dir}/${bin_name} -f ${clash_config} > "${run_path}/${bin_name}-report.log") ; then
+        nohup setuidgid 0:3005 ${bin_path} -d ${data_dir}/${bin_name} -f ${clash_config} > "${run_path}/${bin_name}.log" 2>&1 &
         echo -n $! > ${pid_file}
       else
-        mv ${data_dir}/run/config.yaml ${clash_config}
         log error "configuration failed, please check the ${run_path}/${bin_name}-report.log file."
         exit 1
       fi
@@ -292,7 +252,9 @@ start_box() {
   [ "${crontab_sec}" != "false" ] && \
     crontab_alive || log info "crontab: disable." 
   cgroup_limit
-  detected_port || sleep 1
+  sleep 1
+  detected_port
+  sleep 1
   still_alive
   display_bin_pid
 }
@@ -324,8 +286,9 @@ case "$1" in
     stop_box
     ;;
   restart)
-    stop_box && sleep 1
-    start_box && (${scripts_dir}/box.iptables renew)
+    stop_box
+    sleep 1
+    start_box && ${scripts_dir}/box.iptables renew
     ;;
   usage)
     case "${bin_name}" in
@@ -337,14 +300,17 @@ case "$1" in
     ;;
   reload)
     if [ "${bin_name}" = "clash" ] ; then
-      temporary_config_file
-      log info "Open yacd-meta/configs"
-      log info "klik reload configs"
+      if ${bin_path} -t -d ${data_dir}/clash -f ${clash_config} > "${run_path}/${bin_name}-report.log" ; then
+        log info "config.yaml passed"
+      else
+        log info "config.yaml ceks failed"
+        echo "$(cat ${run_path}/${bin_name}-report.log)"
+        exit 1
+      fi
+      log info "open yacd-meta/configs" && log info "klik reload configs"
     else
      log info "only for Clash" 
     fi
-    (${bin_path} -t -d ${data_dir}/clash -f ${data_dir}/run/config.yaml > "${run_path}/${bin_name}-report.log") && \
-      log info "config.yaml passed" || log info "config.yaml ceks failed"
     ;;
   *)
     echo "$0:  usage: $0 {start|testing|stop|restart|usage|reload}"
