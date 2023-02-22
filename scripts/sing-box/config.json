@@ -42,7 +42,7 @@
       "tag": "dns-out"
     },
     {
-      "tag": "sheynsw",
+      "tag": "BFM",
       "type": "selector",
       "outbounds": [
         "akun-a"
@@ -80,7 +80,7 @@
     }
   ],
   "route": {
-    "final": "sheynsw",
+    "final": "BFM",
     "rules": [
       {
         "protocol": "dns",
@@ -90,7 +90,7 @@
         "domain_suffix": [
           "googlesyndication.com"
         ],
-        "outbound": "sheynsw"
+        "outbound": "BFM"
       },
       {
         "protocol": [

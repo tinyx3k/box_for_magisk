@@ -1,7 +1,6 @@
-# port: 9494
-# socks-port: 9595
-# mixed-port: 9696
+# redir-port wajib di isi jangan kosong, samakan dengan di settings.ini
 redir-port: 9797
+# tproxy-port wajib di isi jangan kosong, samakan dengan di settings.ini
 tproxy-port: 9898
 mode: rule
 allow-lan: true
@@ -28,67 +27,63 @@ geox-url:
 #  - always, Diaktifkan untuk memaksa semua proses agar cocok
 #  - strict, Secara default, ini dinilai dari √clash apakah diaktifkan atau tidak
 #  - off, tidak cocok dengan prosesnya, disarankan untuk menggunakan mode ini di router
-find-process-mode: off # always, strict, off
+find-process-mode: strict # always, strict, off
 
 profile:
   store-selected: true
   store-fake-ip: false
 
-experimental:
-  sniff-tls-sni: false
-  udp-fallback-match: false
+# experimental:
+  # sniff-tls-sni: false
+  # udp-fallback-match: false
 
-sniffer:
-  enable: false
-  ## 对 redir-host 类型识别的流量进行强制嗅探
-  ## 如：Tun、Redir 和 TProxy 并 DNS 为 redir-host 皆属于
-  force-dns-mapping: true
-  parse-pure-ip: true
-  override-destination: true
-  sniff:
-    TLS:
-    #  ports:[443, 8443]
-    HTTP:
-      ports: [80, 8080-8880]
-      override-destination: true
-  force-domain:
-    - +.v2ex.com
-  # skip-domain:
-    # - +.google.com
-  sniffing:
-    - tls
-    - http
-  port-whitelist:
-    - "80"
-    - "443"
+# sniffer:
+  # enable: false
+  # ## 对 redir-host 类型识别的流量进行强制嗅探
+  # ## 如：Tun、Redir 和 TProxy 并 DNS 为 redir-host 皆属于
+  # force-dns-mapping: true
+  # parse-pure-ip: true
+  # override-destination: true
+  # sniff:
+    # TLS:
+    # #  ports:[443, 8443]
+    # HTTP:
+      # ports: [80, 8080-8880]
+      # override-destination: true
+  # force-domain:
+    # - +.v2ex.com
+  # # skip-domain:
+    # # - +.google.com
+  # sniffing:
+    # - tls
+    # - http
+  # port-whitelist:
+    # - "80"
+    # - "443"
 
-tun:
-  enable: false
-  # biarkan default utun
-  device: utun
-  mtu: 9000
-  # gvisor / lwip / system
-  stack: system
-  dns-hijack:
-    - any:53
-  auto-route: false
-  auto-detect-interface: false
-  inet4-address: 172.19.0.1/30
-  inet6-address: [fdfe:dcba:9876::1/126]
-  strict_route: false
-  # inet4_route_address:
-    # - 0.0.0.0/1
-    # - 128.0.0.0/1
-  # inet6_route_address:
-    # - "::/1"
-    # - "8000::/1"
-  # include_android_user:
-  # - 0
-  # - 10
-  # include_package:
-  # - com.android.chrome
-  # exclude_package:
-  # - com.android.captiveportallogin
+# tun:
+  # enable: true
+  # # biarkan default utun
+  # device: utun
+  # mtu: 9000
+  # # gvisor / lwip / system
+  # stack: system
+  # dns-hijack:
+    # - any:53
+  # # bagi yg awam, kalau TUN on wajib true, only armv8/64
+  # auto-route: true
+  # auto-detect-interface: true
+  # # end
+  # inet4-address: 172.19.0.1/30
+  # inet6-address: [fdfe:dcba:9876::1/126]
+  # strict_route: false
+  # # include_android_user:
+  # # - 0
+  # # - 10
+  # # include_package:
+  # # - com.android.chrome
+  # # exclude_package:
+  # # - com.android.captiveportallogin
 
 dns:
   enable: true
@@ -96,7 +91,7 @@ dns:
   prefer-h3: true
   default-nameserver:
     # cloudflare
-    - '1.1.1.1#sheynsw'
+    - '1.1.1.1#BFM'
     # google
     - '8.8.8.8'
   listen: 0.0.0.0:1053
@@ -109,20 +104,14 @@ dns:
   nameserver:
     # cloudflare
     - '1.1.1.1'
-    - 'tls://1.0.0.1:853#sheynsw'
+    - 'tls://1.0.0.1:853#BFM'
     # google
-    - '8.8.8.8#sheynsw'
+    - '8.8.8.8#BFM'
     - 'tls://8.8.4.4:853'
-
-    # - 'tls://1dot1dot1dot1.cloudflare-dns.com:853'
-    # - https://doh.pub/dns-query # DNS over HTTPS
-    # - https://dns.alidns.com/dns-query#h3=true
-    # - https://mozilla.cloudflare-dns.com/dns-query#clash&h3=true
   # proxy-server-nameserver:
     # - '1.1.1.1'
-  # nameserver-policy: {
-    # "geosite:youtube": [1.1.1.1, 8.8.8.8]
-  # }
+  nameserver-policy: { "geosite:youtube": [1.1.1.1, 8.8.8.8] }
+
   # fallback:
     # - 'https://8.8.8.8/dns-query'
     # - 'tcp://8.8.4.4'
@@ -139,17 +128,19 @@ dns:
       # - '+.facebook.com'
       # - '+.youtube.com'
       # - '+.github.com'
+
 hosts:
+  # block update system android
   'ota.googlezip.net': 127.0.0.1
   'ota-cache1.googlezip.net': 127.0.0.1
   'ota-cache2.googlezip.net': 127.0.0.1
 
 proxies:
 proxy-groups:
-  - { name: 'sheynsw', type: select, use: ["@sheynsw"] }
-  - { name: 'block', type: select, proxies: ["REJECT", "sheynsw"] }
+  - { name: 'BFM', type: select, use: ["@BFM"] }
+  - { name: 'block', type: select, proxies: ["REJECT", "BFM"] }
 proxy-providers:
-  '@sheynsw':
+  '@BFM':
     type: file
     path: ./provide/domestic.yml
     # filter: 'xxx'  # Mendukung ekspresi reguler untuk memfilter berdasarkan nama node
@@ -160,20 +151,32 @@ proxy-providers:
       url: http://www.gstatic.com/generate_204
       interval: 1200
 rules:
-  - DOMAIN-SUFFIX,googlesyndication.com,sheynsw
+  - DOMAIN-SUFFIX,googlesyndication.com,BFM
+
+  ## block iklan
   # - AND,((GEOSITE,category-ads-all),(NOT,((DOMAIN-SUFFIX,googlesyndication.com)))),REJECT
   - GEOSITE,category-ads-all,block
-  # - GEOIP,telegram,sheynsw
+
+  ## rules telegram
+  # - GEOIP,telegram,BFM
+
+  ## direct FCM
   # - AND,((NETWORK,TCP),(DST-PORT,5228-5230),(OR,((DOMAIN-KEYWORD,google)))),DIRECT
+
+  ## direct ntp
   # - AND,((NETWORK,UDP),(DST-PORT,123)),DIRECT
+  # - DST-PORT,123/136/137-139,DIRECT,udp
+
+  ## block udp/quic YouTube
   - AND,((NETWORK,udp),(OR,((DST-PORT,443),(GEOSITE,youtube)))),block
   # - AND,((NETWORK,udp),(GEOSITE,youtube)),REJECT
-  # - AND,((PROCESS-NAME,clash),(NOT,((IN-TYPE,inner)))),REJECT
-  # - PROCESS-NAME,com.whatsapp,DIRECT
-  - IN-TYPE,inner,sheynsw
-  # - DST-PORT,123/136/137-139,DIRECT,udp
-  - MATCH,sheynsw
 
+  ## rules inner, recommended untuk non kuota reguler
+  # - AND,((PROCESS-NAME,clash),(NOT,((IN-TYPE,inner)))),REJECT
+  - IN-TYPE,inner,BFM
+  - MATCH,BFM
+
+## rules clash premium
 # rule-providers:
   # block:
     # type: http
@@ -186,8 +189,8 @@ rules:
     # # quic: network == 'udp' and dst_port == 443
     # youshit: network == 'udp' and ('youtube' in host or 'googlevideo' in host)
 # rules:
-  # - DOMAIN-SUFFIX,googlesyndication.com,sheynsw
+  # - DOMAIN-SUFFIX,googlesyndication.com,BFM
   # - RULE-SET,block,block
   # # - SCRIPT,quic,block
   # - SCRIPT,youshit,block
-  # - MATCH,sheynsw
+  # - MATCH,BFM

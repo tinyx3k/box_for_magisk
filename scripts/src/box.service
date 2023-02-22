@@ -121,9 +121,6 @@ run_box() {
   ulimit -SHn 1000000
   case "${bin_name}" in
     sing-box)
-      [ "${proxy_mode}" = "core" ] && \
-        log info "don't forget to set 'route.auto_detect_interface': true"
-      sed -i 's/network_mode=.*/network_mode="tproxy"/' ${settings}
       if (${bin_path} check -D ${data_dir}/${bin_name} > "${run_path}/${bin_name}-report.log" 2>&1) ; then
         nohup setuidgid 0:3005 ${bin_path} run -D ${data_dir}/${bin_name} > "${run_path}/${bin_name}.log" 2>&1 &
         echo -n $! > ${pid_file}
@@ -133,15 +130,9 @@ run_box() {
       fi
       ;;
     clash)
-      if [ "${clash_tun_status}" = "true" ] ; then
-        sed -i 's/network_mode=.*/network_mode="mixed"/' ${settings}
-        sed -i 's/auto-route:.*/auto-route: true/' ${clash_config}
-        sed -i 's/auto-detect-interface:.*/auto-detect-interface: true/' ${clash_config}
-      else
+      if [ "${clash_tun_status}" != "true" ] ; then
         sed -i "s/tproxy-port:.*/tproxy-port: ${tproxy_port}/" ${clash_config}
         sed -i 's/network_mode=.*/network_mode="tproxy"/' ${settings}
-        sed -i 's/auto-route:.*/auto-route: false/' ${clash_config}
-        sed -i 's/auto-detect-interface:.*/auto-detect-interface: false/' ${clash_config}
       fi
       if (${bin_path} -t -d ${data_dir}/${bin_name} -f ${clash_config} > "${run_path}/${bin_name}-report.log") ; then
         nohup setuidgid 0:3005 ${bin_path} -d ${data_dir}/${bin_name} -f ${clash_config} > "${run_path}/${bin_name}.log" 2>&1 &
@@ -309,7 +300,7 @@ case "$1" in
       fi
       log info "open yacd-meta/configs" && log info "klik reload configs"
     else
-     log info "only for Clash" 
+      log info "only for Clash" 
     fi
     ;;
   *)
