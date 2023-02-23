@@ -76,6 +76,9 @@ unzip -o "${ZIPFILE}" -x 'META-INF/*' -d ${MODPATH} >&2
 unzip -j -o "${ZIPFILE}" 'uninstall.sh' -d ${MODPATH} >&2
 unzip -j -o "${ZIPFILE}" 'box_service.sh' -d /data/adb/service.d >&2
 tar -xjf ${MODPATH}/binary/${ARCH}.tar.bz2 -C ${MODPATH}/system/bin >&2
+ui_print "- Extract Dashboard"
+unzip -o ${MODPATH}/dashboard.zip -d /data/adb/box/clash/dashboard/ >&2
+unzip -o ${MODPATH}/dashboard.zip -d /data/adb/box/sing-box/dashboard >&2
 
 ui_print "- Create resolv.conf"
 if [ ! -f "/system/etc/resolv.conf" ] ; then
@@ -101,6 +104,7 @@ ui_print "- Delete leftover files"
 rm -rf ${MODPATH}/scripts
 rm -rf ${MODPATH}/binary
 rm -rf ${MODPATH}/box_service.sh
+rm -rf ${MODPATH}/dashboard.zip
 sleep 1
 ui_print "- Setting permissions"
 set_perm_recursive ${MODPATH} 0 0 0755 0644
