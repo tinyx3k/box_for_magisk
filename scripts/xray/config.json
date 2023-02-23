@@ -30,49 +30,6 @@
   ],
   "outbounds": [
     {
-      "mux": {
-        "concurrency": 8,
-        "enabled": false
-      },
-      "tag": "proxy",
-      "protocol": "vless",
-      "settings": {
-        "vnext": [
-          {
-            "address": "128.199.233.181",
-            "port": 443,
-            "users": [
-              {
-                "encryption": "none",
-                "flow": "xtls-rprx-vision",
-                "id": "aaa-aaa-aaa",
-                "level": 8,
-                "security": "auto"
-              }
-            ]
-          }
-        ]
-      },
-      "streamSettings": {
-        "network": "tcp",
-        "security": "tls",
-        "tcpSettings": {
-          "header": {
-            "type": "none"
-          }
-        },
-        "tlsSettings": {
-          "allowInsecure": true,
-          "fingerprint": "",
-          "serverName": "sni.com"
-        }
-      },
-      "tcpSettings": null,
-      "sockopt": {
-        "domainStrategy": "UseIPv4"
-      }
-    },
-    {
       "tag": "direct",
       "protocol": "freedom",
       "settings": {
@@ -93,6 +50,49 @@
       "protocol": "dns",
       "settings": {
         "address": "8.8.8.8"
+      }
+    },
+    {
+      "tag": "proxy",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "128.199.233.181",
+            "port": 443,
+            "users": [
+              {
+                "encryption": "none",
+                "flow": "xtls-rprx-vision",
+                "id": "8aeaf535-f729-4330-9474-669726f8c9d7",
+                "level": 8,
+                "security": "auto"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "tls",
+        "tcpSettings": {
+          "header": {
+            "type": "none"
+          }
+        },
+        "tlsSettings": {
+          "allowInsecure": true,
+          "fingerprint": "",
+          "serverName": "www.google.com"
+        }
+      },
+      "mux": {
+        "concurrency": 8,
+        "enabled": false
+      },
+      "tcpSettings": null,
+      "sockopt": {
+        "domainStrategy": "UseIPv4"
       }
     }
   ],

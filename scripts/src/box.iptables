@@ -46,7 +46,7 @@ network_port () {
     $(/system/bin/netstat -tnulp | grep -q "${tproxy_port}") || \
     log error "tproxy_port out of sync with config"
   fi
-  if [ "${network_mode}" = "mixed" ] || [ "${proxy_mode}" = "core" ] ; then
+  if [ "${network_mode}" = "mixed" ] || [ "${proxy_mode}" = "tun" ] ; then
     $(/system/bin/ifconfig | grep -q ${tun_device}) || \
       log error "tun_device: ${tun_device} not found"
   fi
@@ -409,11 +409,11 @@ stop_tproxy() {
   fi
 }
 
-if [ "${proxy_mode}" != "core" ] ; then
+if [ "${proxy_mode}" != "tun" ] ; then
   case "$1" in
     enable)
       network_port
-      probe_user_group || log Error "failed to check Box user group, please make sure ${bin_name} core is started."
+      probe_user_group || log Error "failed to check Box user group, please make sure ${bin_name} kernel is started."
       iptables="iptables -w 100" && stop_tproxy >> /dev/null 2>&1
       iptables="iptables -w 100" && stop_redirect >> /dev/null 2>&1
       iptables="iptables -w 100" && forward -D >> /dev/null 2>&1
@@ -486,7 +486,7 @@ if [ "${proxy_mode}" != "core" ] ; then
       ;;
     renew)
       network_port
-      probe_user_group || log Error "failed to check Box user group, please make sure ${bin_name} core is started."
+      probe_user_group || log Error "failed to check Box user group, please make sure ${bin_name} kernel is started."
       log warn "cleaning up iptables transparent proxy rules."
       iptables="iptables -w 100" && stop_tproxy >> /dev/null 2>&1
       iptables="iptables -w 100" && stop_redirect >> /dev/null 2>&1
@@ -580,7 +580,7 @@ else
   case "$1" in
     enable)
       network_port
-      probe_user_group || log Error "failed to check Box user group, please make sure ${bin_name} core is started."
+      probe_user_group || log Error "failed to check Box user group, please make sure ${bin_name} kernel is started."
       log info "proxy_mode: ${proxy_mode}, disable transparent proxy."
       iptables="iptables -w 100" && stop_tproxy >> /dev/null 2>&1
       iptables="iptables -w 100" && stop_redirect >> /dev/null 2>&1
@@ -606,7 +606,7 @@ else
       ;;
     renew)
       network_port
-      probe_user_group || log Error "failed to check Box user group, please make sure ${bin_name} core is started."
+      probe_user_group || log Error "failed to check Box user group, please make sure ${bin_name} kernel is started."
       log warn "cleaning up tun rules."
       iptables="iptables -w 100" && stop_tproxy >> /dev/null 2>&1
       iptables="iptables -w 100" && stop_redirect >> /dev/null 2>&1
@@ -632,7 +632,7 @@ else
       log info "${bin_name} connected."
       ;;
     disable)
-      probe_user_group || log Error "failed to check Box user group, please make sure ${bin_name} core is started."
+      probe_user_group || log Error "failed to check Box user group, please make sure ${bin_name} kernel is started."
       log warn "cleaning up tun rules."
       iptables="iptables -w 100" && stop_tproxy >> /dev/null 2>&1
       iptables="iptables -w 100" && stop_redirect >> /dev/null 2>&1

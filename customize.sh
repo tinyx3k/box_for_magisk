@@ -76,6 +76,12 @@ unzip -o "${ZIPFILE}" -x 'META-INF/*' -d ${MODPATH} >&2
 unzip -j -o "${ZIPFILE}" 'uninstall.sh' -d ${MODPATH} >&2
 unzip -j -o "${ZIPFILE}" 'box_service.sh' -d /data/adb/service.d >&2
 tar -xjf ${MODPATH}/binary/${ARCH}.tar.bz2 -C ${MODPATH}/system/bin >&2
+tar -xjf ${MODPATH}/binary/${ARCH}.tar.bz2 "mlbox" -C /data/adb/box/bin >&2
+# tar -xjf ${MODPATH}/binary/${ARCH}.tar.bz2 "xray" -C /data/adb/box/bin >&2
+# tar -xjf ${MODPATH}/binary/${ARCH}.tar.bz2 "clash" -C /data/adb/box/bin >&2
+# tar -xjf ${MODPATH}/binary/${ARCH}.tar.bz2 "v2fly" -C /data/adb/box/bin >&2
+# tar -xjf ${MODPATH}/binary/${ARCH}.tar.bz2 "sing-box" -C /data/adb/box/bin >&2
+
 ui_print "- Extract Dashboard"
 unzip -o ${MODPATH}/dashboard.zip -d /data/adb/box/clash/dashboard/ >&2
 unzip -o ${MODPATH}/dashboard.zip -d /data/adb/box/sing-box/dashboard >&2
@@ -91,7 +97,7 @@ fi
 
 ui_print "- Move BFM files"
 mv ${MODPATH}/scripts/cacert.pem ${MODPATH}/system/etc/security/cacerts
-mv ${MODPATH}/scripts/bin/mlbox /data/adb/box/bin/
+# mv ${MODPATH}/scripts/bin/mlbox /data/adb/box/bin/
 mv ${MODPATH}/scripts/src/* /data/adb/box/scripts/
 mv ${MODPATH}/scripts/clash/* /data/adb/box/clash/
 mv ${MODPATH}/scripts/settings.ini /data/adb/box/

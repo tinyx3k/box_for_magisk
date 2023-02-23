@@ -1,6 +1,4 @@
-# redir-port wajib di isi jangan kosong, samakan dengan di settings.ini
 redir-port: 9797
-# tproxy-port wajib di isi jangan kosong, samakan dengan di settings.ini
 tproxy-port: 9898
 mode: rule
 allow-lan: true
@@ -16,17 +14,14 @@ external-controller: 0.0.0.0:9090
 # secret: "123456"
 external-ui: ./dashboard/dist
 # tcp-concurrent: false
-# inbound-tfo: true
+# inbound-tfo: false
 # global-client-fingerprint: chrome
-# interface-name: ""
+# interface-name: "rmnet_data+"
 # routing-mark: 233
 geox-url:
   mmdb: "https://raw.githubusercontent.com/Loyalsoldier/geoip/release/Country.mmdb"
   geoip: "https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/geoip.dat"
   geosite: "https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/geosite.dat"
-#  - always, Diaktifkan untuk memaksa semua proses agar cocok
-#  - strict, Secara default, ini dinilai dari √clash apakah diaktifkan atau tidak
-#  - off, tidak cocok dengan prosesnya, disarankan untuk menggunakan mode ini di router
 find-process-mode: strict # always, strict, off
 
 profile:
@@ -151,6 +146,7 @@ proxy-providers:
       url: http://www.gstatic.com/generate_204
       interval: 1200
 rules:
+  ## block ads
   - DOMAIN-SUFFIX,googlesyndication.com,BFM
 
   ## block iklan
@@ -174,6 +170,7 @@ rules:
   ## rules inner, recommended untuk non kuota reguler
   # - AND,((PROCESS-NAME,clash),(NOT,((IN-TYPE,inner)))),REJECT
   - IN-TYPE,inner,BFM
+  ## final
   - MATCH,BFM
 
 ## rules clash premium

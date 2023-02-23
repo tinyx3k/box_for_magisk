@@ -268,6 +268,34 @@ stop_box() {
   fi
 }
 
+reload() {
+  if [ "${bin_name}" = "clash" ] || [ "${bin_name}" = "sing-box" ] ; then
+    case "${bin_name}" in
+    sing-box)
+      if ${bin_path} check -D ${data_dir}/${bin_name} > "${run_path}/${bin_name}-report.log" 2>&1 ; then
+        log info "config.yaml passed"
+      else
+        log info "config.yaml ceks failed"
+        echo "$(cat ${run_path}/${bin_name}-report.log)"
+        exit 1
+      fi
+    ;;
+    clash)
+      if ${bin_path} -t -d ${data_dir}/clash -f ${clash_config} > "${run_path}/${bin_name}-report.log" 2>&1 ; then
+        log info "config.yaml passed"
+      else
+        log info "config.yaml ceks failed"
+        echo "$(cat ${run_path}/${bin_name}-report.log)"
+        exit 1
+      fi
+    ;;
+    esac
+    log info "open yacd-meta/configs" && log info "klik reload configs"
+  else
+    log info "only for clash, OR sing-box" 
+  fi
+}
+
 case "$1" in
   start)
     stop_box >> /dev/null 2>&1
@@ -289,19 +317,8 @@ case "$1" in
     [ $(pidof ${bin_name}) ] && \
       bin_usage || log warn "${bin_name} service is stopped"
     ;;
-  reload)
-    if [ "${bin_name}" = "clash" ] ; then
-      if ${bin_path} -t -d ${data_dir}/clash -f ${clash_config} > "${run_path}/${bin_name}-report.log" ; then
-        log info "config.yaml passed"
-      else
-        log info "config.yaml ceks failed"
-        echo "$(cat ${run_path}/${bin_name}-report.log)"
-        exit 1
-      fi
-      log info "open yacd-meta/configs" && log info "klik reload configs"
-    else
-      log info "only for Clash" 
-    fi
+  reload)  
+    reload
     ;;
   *)
     echo "$0:  usage: $0 {start|testing|stop|restart|usage|reload}"
